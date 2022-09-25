@@ -3,7 +3,7 @@ const fs = require("fs");
 
 let homeContent = "";
 let projectContent = "";
-let registrationContent = "";
+let registrationContent="";
 
 fs.readFile("home.html", (err, home) => {
   if (err) {
@@ -18,30 +18,33 @@ fs.readFile("project.html", (err, project) => {
   }
   projectContent = project;
 });
-fs.readFile("registration.html", (err, registration) => {
-  if (err) {
+
+fs.readFile("registration.html",(err,reg) => {
+  if (err){
     throw err;
   }
-  registrationContent = registration;
+  registrationContent=reg;
 });
-http
-  .createServer((request, response) => {
+
+let args=require("minimist")(process.argv.slice(2));
+
+http.createServer((request, response) => {
     let url = request.url;
     response.writeHeader(200, { "Content-Type": "text/html" });
-    switch (url) { 
-      case "/registration":
-        response.write(registrationContent);
-        response.end();
-        break;
-      case "/project":
-        response.write(projectContent);
-        response.end();
-        break;
-      
-      default:
-        response.write(homeContent);
-        response.end();
-        break;
+    switch (url) {
+        case "/project":
+          response.write(projectContent);
+          response.end();
+          break;
+        case "/registration":
+          response.write(registrationContent);
+          response.end();
+          break;
+
+        default:
+          response.write(homeContent);
+          response.end();
+          break;
     }
   })
-  .listen(port);
+  .listen(args["port"]);
